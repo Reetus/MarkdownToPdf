@@ -34,7 +34,7 @@ jobs:
         uses: NuGet/login@v1
         id: login
         with:
-          user: ${{ secrets.NUGET_USER }}   # your nuget.org profile name (not your email)
+          user: Reetus   # nuget.org profile name that owns the trusted publishing policy
 
       - name: Push to nuget.org
         run: >
