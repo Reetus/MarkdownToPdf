@@ -26,15 +26,15 @@ public sealed class MarkdownPdfOptions
         AllowTrailingCommas = true,
         WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+        Converters = { new JsonStringEnumConverter( JsonNamingPolicy.CamelCase ) },
     };
 
-    public static MarkdownPdfOptions FromJson(string json) =>
-        JsonSerializer.Deserialize<MarkdownPdfOptions>(json, JsonOptions) ?? new MarkdownPdfOptions();
+    public static MarkdownPdfOptions FromJson( string json ) =>
+        JsonSerializer.Deserialize<MarkdownPdfOptions>( json, JsonOptions ) ?? new MarkdownPdfOptions();
 
-    public static MarkdownPdfOptions Load(string path) => FromJson(File.ReadAllText(path));
+    public static MarkdownPdfOptions Load( string path ) => FromJson( File.ReadAllText( path ) );
 
-    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions);
+    public string ToJson() => JsonSerializer.Serialize( this, JsonOptions );
 }
 
 public sealed class PageOptions
@@ -57,28 +57,32 @@ public sealed class PageOptions
             "legal" => (612f, 1008f),
             "tabloid" or "ledger" => (792f, 1224f),
             "executive" => (522f, 756f),
-            _ => ParseCustom(Size),
+            _ => ParseCustom( Size ),
         };
-        return Landscape ? (Math.Max(w, h), Math.Min(w, h)) : (w, h);
+        return Landscape ? (Math.Max( w, h ), Math.Min( w, h )) : (w, h);
     }
 
-    private static (float, float) ParseCustom(string s)
+    private static (float, float) ParseCustom( string s )
     {
-        var parts = s.Split(['x', 'X', '*', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        if (parts.Length == 2) return (Units.Parse(parts[0]), Units.Parse(parts[1]));
-        throw new ArgumentException($"Unknown page size '{s}'. Use A4, Letter, Legal, A3, A5, B5, Tabloid, Executive or e.g. '210mm x 297mm'.");
+        var parts = s.Split( ['x', 'X', '*', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+        if ( parts.Length == 2 )
+        {
+            return (Units.Parse( parts[0] ), Units.Parse( parts[1] ));
+        }
+
+        throw new ArgumentException( $"Unknown page size '{s}'. Use A4, Letter, Legal, A3, A5, B5, Tabloid, Executive or e.g. '210mm x 297mm'." );
     }
 
     public (float Top, float Right, float Bottom, float Left) ResolveMargins()
     {
-        var p = Margins.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries).Select(Units.Parse).ToArray();
+        var p = Margins.Split( [' ', ','], StringSplitOptions.RemoveEmptyEntries ).Select( Units.Parse ).ToArray();
         return p.Length switch
         {
             1 => (p[0], p[0], p[0], p[0]),
             2 => (p[0], p[1], p[0], p[1]),
             3 => (p[0], p[1], p[2], p[1]),
             4 => (p[0], p[1], p[2], p[3]),
-            _ => throw new ArgumentException($"Invalid margins '{Margins}'."),
+            _ => throw new ArgumentException( $"Invalid margins '{Margins}'." ),
         };
     }
 }
@@ -153,7 +157,7 @@ public sealed class HeaderFooterOptions
     public bool SkipFirstPage { get; set; }
     /// <summary>Font size in points.</summary>
     public float Size { get; set; } = 8f;
-    public bool IsEmpty => string.IsNullOrWhiteSpace(Left) && string.IsNullOrWhiteSpace(Center) && string.IsNullOrWhiteSpace(Right);
+    public bool IsEmpty => string.IsNullOrWhiteSpace( Left ) && string.IsNullOrWhiteSpace( Center ) && string.IsNullOrWhiteSpace( Right );
 }
 
 public sealed class TocOptions
@@ -212,14 +216,18 @@ public sealed class DocumentOptions
 /// <summary>Unit parsing: pt (default), mm, cm, in, px (96 dpi).</summary>
 public static partial class Units
 {
-    [GeneratedRegex(@"^\s*(-?[0-9]*\.?[0-9]+)\s*(pt|mm|cm|in|px)?\s*$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex( @"^\s*(-?[0-9]*\.?[0-9]+)\s*(pt|mm|cm|in|px)?\s*$", RegexOptions.IgnoreCase )]
     private static partial Regex UnitRegex();
 
-    public static float Parse(string value)
+    public static float Parse( string value )
     {
-        var m = UnitRegex().Match(value);
-        if (!m.Success) throw new FormatException($"Invalid length '{value}'. Use e.g. 20mm, 0.75in, 54pt.");
-        float v = float.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+        var m = UnitRegex().Match( value );
+        if ( !m.Success )
+        {
+            throw new FormatException( $"Invalid length '{value}'. Use e.g. 20mm, 0.75in, 54pt." );
+        }
+
+        var v = float.Parse( m.Groups[1].Value, CultureInfo.InvariantCulture );
         return m.Groups[2].Value.ToLowerInvariant() switch
         {
             "mm" => v * 72f / 25.4f,

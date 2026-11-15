@@ -27,16 +27,16 @@ public sealed class MarkdownDocument : ContainerBlock
     public string? SourcePath { get; set; }
 
     /// <summary>Link reference definitions ([label]: url "title"), keyed by normalised label.</summary>
-    public Dictionary<string, LinkReference> References { get; } = new(StringComparer.Ordinal);
+    public Dictionary<string, LinkReference> References { get; } = new( StringComparer.Ordinal );
 
     /// <summary>Footnote definitions keyed by normalised label, in definition order.</summary>
-    public Dictionary<string, FootnoteDefinition> Footnotes { get; } = new(StringComparer.Ordinal);
+    public Dictionary<string, FootnoteDefinition> Footnotes { get; } = new( StringComparer.Ordinal );
 
     /// <summary>Footnotes in order of first reference (numbered 1..n).</summary>
     public List<FootnoteDefinition> FootnoteOrder { get; } = [];
 
     /// <summary>Simple key/value pairs from a leading YAML front-matter block (title, author, ...).</summary>
-    public Dictionary<string, string> FrontMatter { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public Dictionary<string, string> FrontMatter { get; } = new( StringComparer.OrdinalIgnoreCase );
 
     /// <summary>All headings in document order.</summary>
     public IEnumerable<Heading> Headings => Descendants().OfType<Heading>();
@@ -44,18 +44,21 @@ public sealed class MarkdownDocument : ContainerBlock
     public IEnumerable<Block> Descendants()
     {
         var stack = new Stack<IEnumerator<Block>>();
-        stack.Push(Children.GetEnumerator());
-        while (stack.Count > 0)
+        stack.Push( Children.GetEnumerator() );
+        while ( stack.Count > 0 )
         {
             var e = stack.Peek();
-            if (!e.MoveNext()) { stack.Pop(); continue; }
+            if ( !e.MoveNext() ) { stack.Pop(); continue; }
             yield return e.Current;
-            if (e.Current is ContainerBlock c) stack.Push(c.Children.GetEnumerator());
+            if ( e.Current is ContainerBlock c )
+            {
+                stack.Push( c.Children.GetEnumerator() );
+            }
         }
     }
 }
 
-public sealed record LinkReference(string Url, string? Title);
+public sealed record LinkReference( string Url, string? Title );
 
 public sealed class Paragraph : LeafBlock;
 
@@ -76,7 +79,7 @@ public sealed class CodeBlock : Block
     public string? Info { get; set; }
     public string Code { get; set; } = "";
     public bool Fenced { get; set; }
-    public string? Language => string.IsNullOrWhiteSpace(Info) ? null : Info.Trim().Split(' ', '\t', '{')[0].Trim().ToLowerInvariant();
+    public string? Language => string.IsNullOrWhiteSpace( Info ) ? null : Info.Trim().Split( ' ', '\t', '{' )[0].Trim().ToLowerInvariant();
 }
 
 public sealed class BlockQuote : ContainerBlock
@@ -132,13 +135,13 @@ public sealed class FootnoteDefinition : ContainerBlock
 
 public abstract class Inline;
 
-public sealed class TextInline(string text) : Inline
+public sealed class TextInline( string text ) : Inline
 {
     public string Text { get; set; } = text;
     public override string ToString() => Text;
 }
 
-public sealed class CodeInline(string code) : Inline
+public sealed class CodeInline( string code ) : Inline
 {
     public string Code { get; } = code;
 }
@@ -174,7 +177,7 @@ public sealed class LineBreakInline : Inline
     public bool Hard { get; init; }
 }
 
-public sealed class HtmlInline(string html) : Inline
+public sealed class HtmlInline( string html ) : Inline
 {
     public string Html { get; } = html;
 }

@@ -151,8 +151,8 @@ A very long line without a language that needs to be wrapped because it is far w
 
 | Command | Description |
 |---------|-------------|
-| `Attack(obj)` | Attack mobile (parameter can be serial or alias). |
-| `UseObject(obj)` | Sends use (double click) request for given object. |
+| `ConvertFile(input, output)` | Converts one Markdown file to a PDF. |
+| `ConvertMarkdown(text)` | Converts a Markdown string and returns the PDF bytes. |
 
 ## Images
 
