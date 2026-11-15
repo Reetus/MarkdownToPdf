@@ -1,0 +1,49 @@
+name: Publish
+
+# Push a tag like v1.2.3 to build, test and publish both packages to nuget.org.
+# Uses nuget.org Trusted Publishing (OIDC): no API key is stored in the repository.
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: nuget          # optional: add protection rules (required reviewers) in repo settings
+    permissions:
+      contents: write           # create the GitHub release
+      id-token: write           # required for Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+
+      - name: Version from tag
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: dotnet test MarkdownToPdf.slnx -c Release -p:Version=${{ env.VERSION }}
+
+      - name: Pack
+        run: dotnet pack MarkdownToPdf.slnx -c Release --no-build -p:Version=${{ env.VERSION }}
+
+      - name: NuGet login (OIDC -> short-lived API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}   # your nuget.org profile name (not your email)
+
+      - name: Push to nuget.org
+        run: >
+          dotnet nuget push "artifacts/packages/*.nupkg"
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" artifacts/packages/*.nupkg --generate-notes --title "$GITHUB_REF_NAME"

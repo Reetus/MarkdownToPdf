@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MarkdownToPdf</RootNamespace>
+    <AssemblyName>MarkdownToPdf</AssemblyName>
+    <PackageId>Reetus.MarkdownToPdf</PackageId>
+    <Description>Dependency-free Markdown (CommonMark + GFM) to PDF converter with TrueType font embedding, syntax highlighting, tables, bookmarks and internal links.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <InternalsVisibleTo Include="MarkdownToPdf.Tests" />
+  </ItemGroup>
+
+</Project>

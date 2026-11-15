@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MarkdownToPdf.Tool</RootNamespace>
+    <AssemblyName>MarkdownToPdf.Tool</AssemblyName>
+    <PackageId>MarkdownToPdf.Tool</PackageId>
+    <Description>Command line tool that converts Markdown files into polished PDF documents. No external dependencies.</Description>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>markdowntopdf</ToolCommandName>
+    <IsPackable>true</IsPackable>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MarkdownToPdf\MarkdownToPdf.csproj" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

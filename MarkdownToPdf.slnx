@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MarkdownToPdf/MarkdownToPdf.csproj" />
+    <Project Path="src/MarkdownToPdf.Tool/MarkdownToPdf.Tool.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MarkdownToPdf.Tests/MarkdownToPdf.Tests.csproj" />
+  </Folder>
+</Solution>
