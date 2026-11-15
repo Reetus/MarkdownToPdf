@@ -110,10 +110,16 @@ public class PdfTests
     [Fact]
     public void TrueTypeSubsetIsLoadable()
     {
-        var entry = FontCatalog.Installed.FirstOrDefault(f => !f.IsCff && !f.EmbeddingRestricted && f.Path.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase));
-        if (entry == null) return; // no system fonts available on this machine
-        var font = TrueTypeFont.Load(File.ReadAllBytes(entry.Path), entry.Path, entry.FaceIndex);
-        Assert.True(font.TryGetGlyph('A', out var gid));
+        // pick an installed text font that actually contains 'A' (symbol fonts don't)
+        TrueTypeFont? font = null;
+        FontEntry? entry = null;
+        ushort gid = 0;
+        foreach (var e in FontCatalog.Installed.Where(f => !f.IsCff && !f.EmbeddingRestricted && f.Path.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)))
+        {
+            var candidate = TrueTypeFont.Load(File.ReadAllBytes(e.Path), e.Path, e.FaceIndex);
+            if (candidate.HasGlyf && candidate.TryGetGlyph('A', out gid)) { font = candidate; entry = e; break; }
+        }
+        if (font == null || entry == null) return; // no suitable system fonts on this machine
         var subset = font.Subset([gid]);
         var reloaded = TrueTypeFont.Load(subset, "subset", 0);
         Assert.Equal(font.NumGlyphs, reloaded.NumGlyphs);
