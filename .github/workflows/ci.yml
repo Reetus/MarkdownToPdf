@@ -19,8 +19,11 @@ jobs:
         with:
           dotnet-version: 11.0.x
 
+      - name: Build
+        run: dotnet build MarkdownToPdf.slnx -c Release
+
       - name: Test
-        run: dotnet test MarkdownToPdf.slnx -c Release
+        run: dotnet test MarkdownToPdf.slnx -c Release --no-build
 
       - name: Pack
         run: dotnet pack MarkdownToPdf.slnx -c Release --no-build

@@ -79,13 +79,6 @@ converter.Convert([MarkdownSource.FromFile("a.md"), MarkdownSource.FromText("# A
 
 Options can also be loaded from JSON with `MarkdownPdfOptions.Load("options.json")`.
 
-## ClassicAssist command reference
-
-`scripts/Build-ClassicAssistPdf.ps1` runs ClassicAssist's `ExportCommands.exe` in a temporary copy of the
-binaries, then converts `Macro-Commands.md` together with every category file it links to into one PDF
-(`artifacts/ClassicAssist-Macro-Commands.pdf`). Use `-Locale ko-KR` (or it-IT, pl-PL, cs-CZ) for the
-translated reference.
-
 ## Building
 
 ```bash
